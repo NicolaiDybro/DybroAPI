@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="DybroAPI">
+    <output-path>$PROJECT_DIR$/out/artifacts/DybroAPI</output-path>
+    <root id="archive" name="DybroAPI.jar">
+      <element id="module-output" name="DybroAPI" />
+    </root>
+  </artifact>
+</component>
