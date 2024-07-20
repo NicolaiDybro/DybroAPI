@@ -1,0 +1,4 @@
+name: DybroAPI
+version: '${project.version}'
+main: user.dybro.dybroapi.DybroAPI
+api-version: '1.21'
