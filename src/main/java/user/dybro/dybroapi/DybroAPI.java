@@ -1,8 +1,6 @@
 package user.dybro.dybroapi;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.splocus.splocusapi.Database.MySQLConnectionManager;
-
 import user.dybro.dybroapi.Database.MySQLConnectionManager;
 
 public final class DybroAPI extends JavaPlugin {
@@ -30,14 +28,14 @@ public final class DybroAPI extends JavaPlugin {
         this.getLogger().info("§aConnected to MySQL database");
 
         // Plugin startup logic
-        this.getLogger().info("§aSplocusApi is enabled");
+        this.getLogger().info("§aDybroAPI is enabled");
     }
 
     @Override
     public void onDisable() {
         instance = null;
         // Plugin shutdown logic
-        this.getLogger().info("§cSplocusApi is disabled");
+        this.getLogger().info("§cDybroAPI is disabled");
     }
 
     public static DybroAPI getInstance() {
