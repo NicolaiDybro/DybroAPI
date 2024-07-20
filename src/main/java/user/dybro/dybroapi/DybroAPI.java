@@ -6,15 +6,18 @@ import user.dybro.dybroapi.Database.MySQLConnectionManager;
 public final class DybroAPI extends JavaPlugin {
     private static DybroAPI instance;
     private MySQLConnectionManager connectionManager;
-    private MySQLConnectionManager sqlManager;
+
     @Override
     public void onEnable() {
+        getLogger().info("DybroAPI is starting...");
         instance = this;
 
         // Create config
+        getLogger().info("Saving default config...");
         this.saveDefaultConfig();
 
         // Get everything from config
+        getLogger().info("Reading configuration...");
         final String host = this.getConfig().getString("mysql.host");
         final int port = this.getConfig().getInt("mysql.port");
         final String database = this.getConfig().getString("mysql.database");
@@ -23,19 +26,19 @@ public final class DybroAPI extends JavaPlugin {
         final boolean useSSL = this.getConfig().getBoolean("mysql.useSSL");
 
         // Initialize connection manager
+        getLogger().info("Initializing connection manager...");
         this.connectionManager = MySQLConnectionManager.getInstance(host, port, database, username, password, useSSL);
         this.connectionManager.connect();
-        this.getLogger().info("§aConnected to MySQL database");
 
-        // Plugin startup logic
-        this.getLogger().info("§aDybroAPI is enabled");
+        getLogger().info("§aConnected to MySQL database");
+        getLogger().info("§aDybroAPI is enabled successfully");
     }
 
     @Override
     public void onDisable() {
+        getLogger().info("DybroAPI is shutting down...");
         instance = null;
-        // Plugin shutdown logic
-        this.getLogger().info("§cDybroAPI is disabled");
+        getLogger().info("DybroAPI is disabled successfully");
     }
 
     public static DybroAPI getInstance() {
@@ -46,10 +49,4 @@ public final class DybroAPI extends JavaPlugin {
     public MySQLConnectionManager getConnectionManager() {
         return connectionManager;
     }
-
-    // Getters
-    public MySQLConnectionManager getSqlManager() {
-        return sqlManager;
-    }
-
 }
