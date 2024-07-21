@@ -32,6 +32,7 @@ public final class DybroAPI extends JavaPlugin {
 
         getLogger().info("§aConnected to MySQL database");
         getLogger().info("§aDybroAPI is enabled successfully");
+        getLogger().info("DybroAPI instance: " + instance);
     }
 
     @Override
