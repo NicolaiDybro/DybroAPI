@@ -1,9 +1,13 @@
 package user.dybro.dybroapi.SpiGUI;
 
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import user.dybro.dybroapi.SpiGUI.buttons.SGButton;
+import user.dybro.dybroapi.SpiGUI.item.ItemBuilder;
 import user.dybro.dybroapi.SpiGUI.menu.SGMenu;
 import user.dybro.dybroapi.SpiGUI.menu.SGMenuListener;
 import user.dybro.dybroapi.SpiGUI.menu.SGOpenMenu;
@@ -264,6 +268,20 @@ public class SpiGUI {
 
         return foundInventories;
 
+    }
+
+
+    // Glass border
+    public static void addBorder(SGMenu menu, Material material) {
+        ItemStack glassPane = new ItemBuilder(material).name(" ").build();
+        for (int i = 0; i < 9; i++) {
+            menu.setButton(i, new SGButton(glassPane));
+            menu.setButton(45 + i, new SGButton(glassPane));
+        }
+        for (int i = 1; i < 5; i++) {
+            menu.setButton(i * 9, new SGButton(glassPane));
+            menu.setButton(i * 9 + 8, new SGButton(glassPane));
+        }
     }
 
 }
