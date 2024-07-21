@@ -1,16 +1,31 @@
 package user.dybro.dybroapi;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import user.dybro.dybroapi.Database.MySQLConnectionManager;
+import user.dybro.dybroapi.SpiGUI.SpiGUI;
+
+import java.util.Objects;
 
 public final class DybroAPI extends JavaPlugin {
     private static DybroAPI instance;
+    public static SpiGUI spiGUI;
     private MySQLConnectionManager connectionManager;
 
     @Override
-    public void onEnable() {
-        getLogger().info("DybroAPI is starting...");
+    public void onLoad() {
+        if (instance != null) throw new RuntimeException();
         instance = this;
+    }
+
+
+    @Override
+    public void onEnable() {
+
+        //
+        spiGUI = new SpiGUI(this);
+
+        getLogger().info("DybroAPI is starting...");
 
         // Create config
         getLogger().info("Saving default config...");
@@ -42,8 +57,12 @@ public final class DybroAPI extends JavaPlugin {
         getLogger().info("DybroAPI is disabled successfully");
     }
 
-    public static DybroAPI getInstance() {
-        return instance;
+    public static @NotNull DybroAPI getInstance() {
+        return Objects.requireNonNull(instance);
+    }
+
+    public static SpiGUI getSpiGUI() {
+        return spiGUI;
     }
 
     // Getters
