@@ -271,17 +271,6 @@ public class SpiGUI {
     }
 
 
-    // Glass border
-    public static void addBorder(SGMenu menu, Material material) {
-        ItemStack glassPane = new ItemBuilder(material).name(" ").build();
-        for (int i = 0; i < 9; i++) {
-            menu.setButton(i, new SGButton(glassPane));
-            menu.setButton(45 + i, new SGButton(glassPane));
-        }
-        for (int i = 1; i < 5; i++) {
-            menu.setButton(i * 9, new SGButton(glassPane));
-            menu.setButton(i * 9 + 8, new SGButton(glassPane));
-        }
-    }
+
 
 }

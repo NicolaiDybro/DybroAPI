@@ -1,9 +1,14 @@
 package user.dybro.dybroapi;
 
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import user.dybro.dybroapi.Database.MySQLConnectionManager;
 import user.dybro.dybroapi.SpiGUI.SpiGUI;
+import user.dybro.dybroapi.SpiGUI.buttons.SGButton;
+import user.dybro.dybroapi.SpiGUI.item.ItemBuilder;
+import user.dybro.dybroapi.SpiGUI.menu.SGMenu;
 
 import java.util.Objects;
 
@@ -63,6 +68,19 @@ public final class DybroAPI extends JavaPlugin {
 
     public static SpiGUI getSpiGUI() {
         return spiGUI;
+    }
+
+    // Glass border
+    public void addBorder(SGMenu menu, Material material) {
+        ItemStack glassPane = new ItemBuilder(material).name(" ").build();
+        for (int i = 0; i < 9; i++) {
+            menu.setButton(i, new SGButton(glassPane));
+            menu.setButton(45 + i, new SGButton(glassPane));
+        }
+        for (int i = 1; i < 5; i++) {
+            menu.setButton(i * 9, new SGButton(glassPane));
+            menu.setButton(i * 9 + 8, new SGButton(glassPane));
+        }
     }
 
     // Getters
