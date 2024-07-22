@@ -21,12 +21,7 @@ public class MySQLConnectionManager {
         config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=" + useSSL);
         config.setUsername(username);
         config.setPassword(password);
-        config.setMaximumPoolSize(3);
         config.setConnectionTestQuery("SELECT 1");
-        config.setIdleTimeout(60000);  // 60 seconds
-        config.setMaxLifetime(1800000); // 30 minutes
-        config.setConnectionTimeout(30000); // 30 seconds
-        config.setLeakDetectionThreshold(2000); // 2 seconds
 
         // Initialize HikariDataSource object
         try {
