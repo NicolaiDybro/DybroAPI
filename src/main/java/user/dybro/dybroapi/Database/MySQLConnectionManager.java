@@ -9,13 +9,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-
-// MySQLConnectionManager class
-// This class is responsible for managing the connection to the MySQL database
 public class MySQLConnectionManager {
     private Plugin plugin = DybroAPI.getInstance();
     private static MySQLConnectionManager instance;
-    private Connection connection;
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;
 
@@ -27,6 +23,10 @@ public class MySQLConnectionManager {
         config.setPassword(password);
         config.setMaximumPoolSize(3);
         config.setConnectionTestQuery("SELECT 1");
+        config.setIdleTimeout(60000);  // 60 seconds
+        config.setMaxLifetime(1800000); // 30 minutes
+        config.setConnectionTimeout(30000); // 30 seconds
+        config.setLeakDetectionThreshold(2000); // 2 seconds
 
         // Initialize HikariDataSource object
         try {
@@ -36,6 +36,8 @@ public class MySQLConnectionManager {
             plugin.getLogger().info("§aHikariDataSource initialized successfully.");
         } catch (Exception ex) {
             this.initializedSuccessfully = false;
+            plugin.getLogger().severe("§cFailed to initialize HikariDataSource. Please check your configuration.");
+            ex.printStackTrace();
         }
     }
 
@@ -53,8 +55,8 @@ public class MySQLConnectionManager {
             plugin.getLogger().severe("§cFailed to initialize HikariDataSource. Please check your configuration.");
             return;
         }
-        try {
-            this.connection = this.hikari.getConnection();
+        try (Connection connection = this.hikari.getConnection()) {
+            plugin.getLogger().info("§aConnected to MySQL database successfully.");
         } catch (SQLException ex) {
             plugin.getLogger().severe("§cFailed to connect to MySQL database. Please check your configuration.");
             ex.printStackTrace();
@@ -63,19 +65,19 @@ public class MySQLConnectionManager {
 
     // Disconnect from MySQL database and close connection
     public void disconnect() throws SQLException {
-        if (connection != null && !connection.isClosed()) {
-            connection.close();
+        if (hikari != null && !hikari.isClosed()) {
+            hikari.close();
         }
     }
 
     // Get connection object
-    public Connection getConnection() {
-        return connection;
+    public Connection getConnection() throws SQLException {
+        return hikari.getConnection();
     }
 
     // Execute query and return result
     public void executeUpdate(String query) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
             statement.executeUpdate();
         }
     }
