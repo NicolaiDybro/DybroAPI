@@ -12,7 +12,9 @@ import user.dybro.dybroapi.SpiGUI.buttons.SGButton;
 import user.dybro.dybroapi.SpiGUI.item.ItemBuilder;
 import user.dybro.dybroapi.SpiGUI.menu.SGMenu;
 
+import java.sql.SQLException;
 import java.util.Objects;
+import java.util.logging.Level;
 
 public final class DybroAPI extends JavaPlugin {
     private static DybroAPI instance;
@@ -60,7 +62,6 @@ public final class DybroAPI extends JavaPlugin {
         if (!setupEconomy() ) {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
-            return;
         }
     }
 
@@ -68,16 +69,17 @@ public final class DybroAPI extends JavaPlugin {
     public void onDisable() {
         getLogger().info("DybroAPI is shutting down...");
         instance = null;
-        getLogger().info("DybroAPI is disabled successfully");
 
         // Disconnect
         try {
             connectionManager.disconnect();
             getLogger().info("Disconnected from MySQL database");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             getLogger().severe("Failed to disconnect from MySQL database");
-            e.printStackTrace();
+            getLogger().log(Level.SEVERE, "Disconnection error:", e);
         }
+
+        getLogger().info("DybroAPI is disabled successfully");
     }
 
     public static @NotNull DybroAPI getInstance() {

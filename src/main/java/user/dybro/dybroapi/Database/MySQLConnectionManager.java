@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MySQLConnectionManager {
     private Plugin plugin = DybroAPI.getInstance();
-    private static MySQLConnectionManager instance;
+    private static volatile MySQLConnectionManager instance;
     private HikariDataSource hikari;
     private boolean initializedSuccessfully;
 
@@ -53,7 +53,11 @@ public class MySQLConnectionManager {
     // Get instance of MySQLConnectionManager class
     public static MySQLConnectionManager getInstance(String host, int port, String database, String username, String password, boolean useSSL) {
         if (instance == null) {
-            instance = new MySQLConnectionManager(host, port, database, username, password, useSSL);
+            synchronized (MySQLConnectionManager.class) {
+                if (instance == null) {
+                    instance = new MySQLConnectionManager(host, port, database, username, password, useSSL);
+                }
+            }
         }
         return instance;
     }
