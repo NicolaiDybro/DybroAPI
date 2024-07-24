@@ -1,4 +1,6 @@
 name: DybroAPI
 version: '1.0'
 main: user.dybro.dybroapi.DybroAPI
+depend:
+  - Vault
 api-version: '1.21'
