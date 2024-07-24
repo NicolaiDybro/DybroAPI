@@ -2,13 +2,15 @@ package user.dybro.dybroapi.Database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.HikariPoolMXBean;
 import org.bukkit.plugin.Plugin;
 import user.dybro.dybroapi.DybroAPI;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class MySQLConnectionManager {
     private Plugin plugin = DybroAPI.getInstance();
@@ -35,13 +37,12 @@ public class MySQLConnectionManager {
         config.addDataSourceProperty("prepStmtCacheSize", "250");
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
 
-
-        // Initialize HikariDataSource object
         try {
             plugin.getLogger().info("§aInitializing HikariDataSource...");
             this.hikari = new HikariDataSource(config);
             this.initializedSuccessfully = true;
             plugin.getLogger().info("§aHikariDataSource initialized successfully.");
+            startLoggingPoolMetrics();
         } catch (Exception ex) {
             this.initializedSuccessfully = false;
             plugin.getLogger().severe("§cFailed to initialize HikariDataSource. Please check your configuration.");
@@ -91,4 +92,26 @@ public class MySQLConnectionManager {
         }
     }
 
+    // Log pool metrics periodically
+    private void startLoggingPoolMetrics() {
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::logCurrentPoolState, 1, 1, TimeUnit.MINUTES);
+    }
+
+    // Log the current state of the connection pool
+    private void logCurrentPoolState() {
+        if (hikari != null && hikari.isRunning()) {
+            HikariPoolMXBean poolMXBean = hikari.getHikariPoolMXBean();
+            int totalConnections = poolMXBean.getTotalConnections();
+            int activeConnections = poolMXBean.getActiveConnections();
+            int idleConnections = poolMXBean.getIdleConnections();
+            int threadsAwaitingConnection = poolMXBean.getThreadsAwaitingConnection();
+
+            plugin.getLogger().info("Total connections: " + totalConnections);
+            plugin.getLogger().info("Active connections: " + activeConnections);
+            plugin.getLogger().info("Idle connections: " + idleConnections);
+            plugin.getLogger().info("Threads awaiting connection: " + threadsAwaitingConnection);
+        } else {
+            plugin.getLogger().severe("HikariDataSource is not initialized or not running.");
+        }
+    }
 }
