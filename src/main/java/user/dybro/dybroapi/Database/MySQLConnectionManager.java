@@ -8,6 +8,7 @@ import user.dybro.dybroapi.DybroAPI;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
 
 public class MySQLConnectionManager {
     private Plugin plugin = DybroAPI.getInstance();
@@ -82,5 +83,37 @@ public class MySQLConnectionManager {
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.executeUpdate();
         }
+    }
+
+    public CompletableFuture<Connection> getConnectionAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return hikari.getConnection();
+            } catch (SQLException ex) {
+                plugin.getLogger().severe("§cFailed to get MySQL connection.");
+                ex.printStackTrace();
+                return null;
+            }
+        });
+    }
+
+    public CompletableFuture<Void> executeUpdateAsync(String query) {
+        return getConnectionAsync().thenAccept(connection -> {
+            if (connection != null) {
+                try (PreparedStatement statement = connection.prepareStatement(query)) {
+                    statement.executeUpdate();
+                } catch (SQLException ex) {
+                    plugin.getLogger().severe("§cFailed to execute update.");
+                    ex.printStackTrace();
+                } finally {
+                    try {
+                        connection.close();
+                    } catch (SQLException ex) {
+                        plugin.getLogger().severe("§cFailed to close MySQL connection.");
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 }
