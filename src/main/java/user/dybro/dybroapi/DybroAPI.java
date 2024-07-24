@@ -1,7 +1,9 @@
 package user.dybro.dybroapi;
 
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import user.dybro.dybroapi.Database.MySQLConnectionManager;
@@ -14,6 +16,7 @@ import java.util.Objects;
 
 public final class DybroAPI extends JavaPlugin {
     private static DybroAPI instance;
+    private static Economy econ = null;
     public static SpiGUI spiGUI;
     private MySQLConnectionManager connectionManager;
 
@@ -26,8 +29,6 @@ public final class DybroAPI extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
-        //
         spiGUI = new SpiGUI(this);
 
         getLogger().info("DybroAPI is starting...");
@@ -53,6 +54,13 @@ public final class DybroAPI extends JavaPlugin {
         getLogger().info("§aConnected to MySQL database");
         getLogger().info("§aDybroAPI is enabled successfully");
         getLogger().info("DybroAPI instance: " + instance);
+
+
+        if (!setupEconomy() ) {
+            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
     }
 
     @Override
@@ -86,5 +94,21 @@ public final class DybroAPI extends JavaPlugin {
     // Getters
     public MySQLConnectionManager getConnectionManager() {
         return connectionManager;
+    }
+
+    // Vault economy setup
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return true;
+    }
+    public static Economy getEconomy() {
+        return econ;
     }
 }

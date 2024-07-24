@@ -23,6 +23,12 @@ public class MySQLConnectionManager {
         config.setPassword(password);
         config.setConnectionTestQuery("SELECT 1");
 
+        // Additional configurations
+        config.setConnectionTimeout(30000); // 30 seconds
+        config.setIdleTimeout(600000); // 10 minutes
+        config.setMaxLifetime(1800000); // 30 minutes
+        config.setMaximumPoolSize(50); // Increase pool size as needed
+
         // Initialize HikariDataSource object
         try {
             plugin.getLogger().info("§aInitializing HikariDataSource...");
@@ -72,7 +78,8 @@ public class MySQLConnectionManager {
 
     // Execute query and return result
     public void executeUpdate(String query) throws SQLException {
-        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(query)) {
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
             statement.executeUpdate();
         }
     }
