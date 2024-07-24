@@ -19,6 +19,7 @@ public final class DybroAPI extends JavaPlugin {
     private static Economy econ = null;
     public static SpiGUI spiGUI;
     private MySQLConnectionManager connectionManager;
+    private final String KINGDOM = "§8[§x§f§8§a§0§1§c§lK§x§f§1§f§1§6§f§lI§8]";
 
     @Override
     public void onLoad() {
