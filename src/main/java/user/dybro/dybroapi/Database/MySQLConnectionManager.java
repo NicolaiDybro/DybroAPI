@@ -28,7 +28,13 @@ public class MySQLConnectionManager {
         config.setConnectionTimeout(30000); // 30 seconds
         config.setIdleTimeout(600000); // 10 minutes
         config.setMaxLifetime(1800000); // 30 minutes
-        config.setMaximumPoolSize(50); // Increase pool size as needed
+        config.setMaximumPoolSize(100); // Increase pool size as needed
+        config.setLeakDetectionThreshold(2000); // 2 seconds to detect connection leaks
+        config.setPoolName("DybroAPI-HikariCP");
+        config.addDataSourceProperty("cachePrepStmts", "true");
+        config.addDataSourceProperty("prepStmtCacheSize", "250");
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
 
         // Initialize HikariDataSource object
         try {
@@ -85,35 +91,4 @@ public class MySQLConnectionManager {
         }
     }
 
-    public CompletableFuture<Connection> getConnectionAsync() {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return hikari.getConnection();
-            } catch (SQLException ex) {
-                plugin.getLogger().severe("§cFailed to get MySQL connection.");
-                ex.printStackTrace();
-                return null;
-            }
-        });
-    }
-
-    public CompletableFuture<Void> executeUpdateAsync(String query) {
-        return getConnectionAsync().thenAccept(connection -> {
-            if (connection != null) {
-                try (PreparedStatement statement = connection.prepareStatement(query)) {
-                    statement.executeUpdate();
-                } catch (SQLException ex) {
-                    plugin.getLogger().severe("§cFailed to execute update.");
-                    ex.printStackTrace();
-                } finally {
-                    try {
-                        connection.close();
-                    } catch (SQLException ex) {
-                        plugin.getLogger().severe("§cFailed to close MySQL connection.");
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        });
-    }
 }
