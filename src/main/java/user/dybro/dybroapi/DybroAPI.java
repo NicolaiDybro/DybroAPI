@@ -69,6 +69,15 @@ public final class DybroAPI extends JavaPlugin {
         getLogger().info("DybroAPI is shutting down...");
         instance = null;
         getLogger().info("DybroAPI is disabled successfully");
+
+        // Disconnect
+        try {
+            connectionManager.disconnect();
+            getLogger().info("Disconnected from MySQL database");
+        } catch (Exception e) {
+            getLogger().severe("Failed to disconnect from MySQL database");
+            e.printStackTrace();
+        }
     }
 
     public static @NotNull DybroAPI getInstance() {
