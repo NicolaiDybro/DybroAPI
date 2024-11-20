@@ -30,7 +30,7 @@ public class MySQLConnectionManager {
         config.setConnectionTimeout(30000); // 30 seconds
         config.setIdleTimeout(600000); // 10 minutes
         config.setMaxLifetime(1800000); // 30 minutes
-        config.setMaximumPoolSize(100); // Increase pool size as needed
+        config.setMaximumPoolSize(50); // Increase pool size as needed
         config.setLeakDetectionThreshold(2000); // 2 seconds to detect connection leaks
         config.setPoolName("DybroAPI-HikariCP");
         config.addDataSourceProperty("cachePrepStmts", "true");
